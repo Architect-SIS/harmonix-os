@@ -1,18 +1,15 @@
 # ═══════════════════════════════════════════════════════════════
 # Harmonix OS — Hyprpanel Configuration
 # ═══════════════════════════════════════════════════════════════
-# Themeable panel — agent status, system metrics, notifications.
-# Uses the official programs.hyprpanel Home Manager module.
+# HyprPanel is now in nixpkgs — programs.hyprpanel from home-manager.
+# No flake input needed.
 # ΣΔ → 0
 { config, pkgs, lib, inputs, ... }:
 
 {
   programs.hyprpanel = {
     enable = true;
-    package = inputs.hyprpanel.packages.${pkgs.system}.default;
-
-    # HyprPanel handles notifications — mako must NOT run alongside it.
-    # See home/hyprland.nix exec-once for startup config.
+    # package comes from nixpkgs automatically via programs.hyprpanel
 
     settings = {
       layout = {

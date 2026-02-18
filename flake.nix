@@ -31,10 +31,7 @@
       inputs.hyprland.follows = "hyprland";
     };
 
-    hyprpanel = {
-      url = "github:Jas-SinghFSU/HyprPanel";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # hyprpanel is now in nixpkgs — no flake input needed
 
     # ═══════════════════════════════════════════════════════════════
     # TIER 5: AgentZero Framework (non-flake, vendored)
@@ -46,7 +43,7 @@
   };
 
   outputs = { self, nixpkgs, home-manager, impermanence, sops-nix,
-              hyprland, hyprland-plugins, hyprpanel, agent-zero, ... }@inputs:
+              hyprland, hyprland-plugins, agent-zero, ... }@inputs:
   let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
@@ -93,9 +90,6 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.sharedModules = [
-            inputs.hyprpanel.homeManagerModules.hyprpanel
-          ];
           home-manager.users.architect = import ./home/default.nix;
         }
       ];
