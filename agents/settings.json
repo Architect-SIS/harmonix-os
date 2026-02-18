@@ -1,0 +1,6 @@
+{
+  "chat_model": "openrouter/google/kimi-k2",
+  "utility_model": "openrouter/google/kimi-k2",
+  "embeddings_model": "openrouter/openai/text-embedding-3-small",
+  "default_profile": "architect"
+}
