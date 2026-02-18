@@ -93,6 +93,9 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.sharedModules = [
+            inputs.hyprpanel.homeManagerModules.hyprpanel
+          ];
           home-manager.users.architect = import ./home/default.nix;
         }
       ];

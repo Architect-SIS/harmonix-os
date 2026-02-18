@@ -127,7 +127,5 @@
   };
 
   # ─── Hardware ─────────────────────────────────────────────────
-  hardware = {
-    graphics.enable = true;
-  };
+  # hardware.graphics defined in hardware-configuration.nix with enable32Bit
 }

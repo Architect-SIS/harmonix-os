@@ -108,7 +108,7 @@
       exec-once = [
         "hyprpaper"
         "hypridle"
-        "mako"
+        # mako removed: HyprPanel handles notifications internally
         "[workspace 1 silent] kitty"
       ];
 

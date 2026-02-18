@@ -14,7 +14,7 @@ let
     aiofiles
   ]);
 
-  rendererSrc = ./agui-renderer;
+  rendererSrc = ./agui_renderer;
 in
 {
   # ─── Systemd User Service ────────────────────────────────────
@@ -26,7 +26,7 @@ in
 
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pythonEnv}/bin/uvicorn desktop.agui-renderer.server:app --host 127.0.0.1 --port 3100";
+      ExecStart = "${pythonEnv}/bin/uvicorn desktop.agui_renderer.server:app --host 127.0.0.1 --port 3100";
       WorkingDirectory = "/persist/home/architect/harmonix-os";
       Restart = "on-failure";
       RestartSec = 5;
