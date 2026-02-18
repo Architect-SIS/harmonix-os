@@ -95,7 +95,7 @@
     devShells.${system}.default = pkgs.mkShell {
       packages = with pkgs; [
         nil           # Nix LSP
-        nixfmt-rfc-style  # Nix formatter
+        nixfmt        # Nix formatter
         sops          # Secret management
         age           # Encryption
       ];

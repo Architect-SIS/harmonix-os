@@ -78,7 +78,7 @@
 
     # Nix tools
     nil             # Nix LSP
-    nixfmt-rfc-style
+    nixfmt          # Nix formatter (nixfmt-rfc-style merged into nixfmt)
 
     # System
     pciutils
@@ -99,7 +99,7 @@
       inter
       jetbrains-mono
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       (nerd-fonts.jetbrains-mono)
     ];
     fontconfig.defaultFonts = {
