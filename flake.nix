@@ -24,12 +24,8 @@
     # ═══════════════════════════════════════════════════════════════
     # TIER 6: Hyprland Desktop Environment
     # ═══════════════════════════════════════════════════════════════
-    hyprland.url = "github:hyprwm/Hyprland";
-
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
+    # hyprland and hyprland-plugins: use nixpkgs versions
+    # (hyprland flake uses lib.fileset.gitTracked which fails on store paths)
 
     # hyprpanel is now in nixpkgs — no flake input needed
 
@@ -43,7 +39,7 @@
   };
 
   outputs = { self, nixpkgs, home-manager, impermanence, sops-nix,
-              hyprland, hyprland-plugins, agent-zero, ... }@inputs:
+              agent-zero, ... }@inputs:
   let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
