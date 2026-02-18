@@ -8,13 +8,8 @@
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-
-    plugins = with inputs.hyprland-plugins.packages.${pkgs.system}; [
-      borders-plus-plus
-      hyprbars
-      hyprexpo
-    ];
+    # package: managed at system level via programs.hyprland.package in desktop/hyprland.nix
+    # plugins: managed at system level to avoid lib.fileset.gitTracked store-path error
 
     settings = {
       # ─── Monitor ──────────────────────────────────────────────
