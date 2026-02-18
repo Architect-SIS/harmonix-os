@@ -52,7 +52,7 @@ fail() {
 }
 
 ask() {
-  echo -e -n "  ${BOLD}$1${NC} "
+  echo -e -n "  ${BOLD}$1${NC} " >&2
   read -r REPLY
   echo "$REPLY"
 }
@@ -346,11 +346,26 @@ if ! command -v git &>/dev/null; then
   nix-env -iA nixos.git 2>/dev/null || true
 fi
 
+# Fix ownership so git/nix can operate as root on live USB
+chown -R root:root "$DEST"
+
+# Use env vars for git identity (no writable config file needed on live USB)
+export GIT_AUTHOR_NAME="Architect-SIS"
+export GIT_AUTHOR_EMAIL="fabricatedkc@gmail.com"
+export GIT_COMMITTER_NAME="Architect-SIS"
+export GIT_COMMITTER_EMAIL="fabricatedkc@gmail.com"
+
+# If already a git repo (re-run), reset it
+rm -rf "$DEST/.git"
+
 git init
 git add -A
-git commit -m "Initial commit: Harmonix OS flake"
+git -c safe.directory="$DEST" commit -m "Initial commit: Harmonix OS flake"
 ok "Git repo initialized and ALL files staged + committed"
 ok "This is CRITICAL — Nix flakes only see git-tracked files"
+
+# Mark safe for nix to read
+git config --global --add safe.directory "$DEST" 2>/dev/null || true
 
 # Set up remote (won't push yet — no auth on live USB)
 git remote add origin https://github.com/Architect-SIS/harmonix-os.git 2>/dev/null || true
@@ -368,9 +383,13 @@ if [[ -f /mnt/etc/machine-id ]]; then
   ok "Machine ID generated and persisted"
 fi
 
-# Generate SSH host key
-ssh-keygen -t ed25519 -f /mnt/persist/etc/ssh/ssh_host_ed25519_key -N "" -q
-ok "SSH host key generated"
+# Generate SSH host key (skip if already exists from previous run)
+if [[ ! -f /mnt/persist/etc/ssh/ssh_host_ed25519_key ]]; then
+  ssh-keygen -t ed25519 -f /mnt/persist/etc/ssh/ssh_host_ed25519_key -N "" -q
+  ok "SSH host key generated"
+else
+  ok "SSH host key already exists (previous run)"
+fi
 
 # ═══════════════════════════════════════════════════════════════
 # STEP 13: INSTALL NIXOS
