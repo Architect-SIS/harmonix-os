@@ -27,9 +27,9 @@
   # ─── Git ──────────────────────────────────────────────────────
   programs.git = {
     enable = true;
-    userName = "Architect-SIS";
-    userEmail = "fabricatedkc@gmail.com";
-    extraConfig = {
+    settings = {
+      user.name = "Architect-SIS";
+      user.email = "fabricatedkc@gmail.com";
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;

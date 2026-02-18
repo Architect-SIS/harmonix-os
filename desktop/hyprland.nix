@@ -47,8 +47,8 @@
     slurp
     swappy
 
-    # Application launcher
-    rofi-wayland
+    # Application launcher (rofi-wayland merged into rofi in nixpkgs-unstable)
+    rofi
 
     # File manager
     pcmanfm-qt
