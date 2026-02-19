@@ -2,36 +2,25 @@
   description = "Harmonix OS — Sovereign Builder Operating System";
 
   inputs = {
-    # ═══════════════════════════════════════════════════════════════
-    # TIER 1: NixOS Foundation
-    # ═══════════════════════════════════════════════════════════════
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Security: ephemeral root — only declared paths persist
     impermanence.url = "github:nix-community/impermanence";
 
-    # Security: encrypted secrets management (activated post-install)
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # ═══════════════════════════════════════════════════════════════
-    # TIER 6: Hyprland Desktop Environment
-    # ═══════════════════════════════════════════════════════════════
-    # hyprland and hyprland-plugins: use nixpkgs versions
-    # (hyprland flake uses lib.fileset.gitTracked which fails on store paths)
+    hyprpanel = {
+      url = "github:Jas-SinghFSU/HyprPanel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    # hyprpanel is now in nixpkgs — no flake input needed
-
-    # ═══════════════════════════════════════════════════════════════
-    # TIER 5: AgentZero Framework (non-flake, vendored)
-    # ═══════════════════════════════════════════════════════════════
     agent-zero = {
       url = "github:frdel/agent-zero";
       flake = false;
@@ -39,48 +28,31 @@
   };
 
   outputs = { self, nixpkgs, home-manager, impermanence, sops-nix,
-              agent-zero, ... }@inputs:
+              hyprpanel, agent-zero, ... }@inputs:
   let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      config.allowUnfree = false;  # Sovereignty: no proprietary packages
+      config.allowUnfree = false;
     };
   in
   {
-    # ═══════════════════════════════════════════════════════════════
-    # THE ONE COMMAND: sudo nixos-install --flake .#harmonix
-    # Post-install:    sudo nixos-rebuild switch --flake .#harmonix
-    # ═══════════════════════════════════════════════════════════════
     nixosConfigurations.harmonix = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs; };
       modules = [
-        # Hardware (generated per-machine)
         ./system/hardware-configuration.nix
-
-        # Tier 1: Foundation
         ./system/core.nix
         ./system/security.nix
         ./system/networking.nix
         ./system/containers.nix
         ./system/users.nix
-
-        # Tier 6: Desktop
         ./desktop/hyprland.nix
         ./desktop/agui-renderer.nix
-
-        # Tier 5: Agent Brain
         ./agents/agent-zero.nix
-
-        # Tier 4: Builder Mode
         ./builder/builder.nix
-
-        # Security modules
         impermanence.nixosModules.impermanence
         sops-nix.nixosModules.sops
-
-        # Home Manager (user-space config)
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
@@ -91,18 +63,11 @@
       ];
     };
 
-    # Development shell for working on Harmonix OS itself
     devShells.${system}.default = pkgs.mkShell {
-      packages = with pkgs; [
-        nil           # Nix LSP
-        nixfmt        # Nix formatter
-        sops          # Secret management
-        age           # Encryption
-      ];
+      packages = with pkgs; [ nil nixfmt-rfc-style sops age ];
       shellHook = ''
         echo "═══════════════════════════════════════════"
-        echo "  Harmonix OS — Development Shell"
-        echo "  ΣΔ → 0"
+        echo "  Harmonix OS — Development Shell  ΣΔ → 0"
         echo "═══════════════════════════════════════════"
       '';
     };

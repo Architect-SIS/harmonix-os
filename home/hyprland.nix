@@ -1,21 +1,16 @@
-# ═══════════════════════════════════════════════════════════════
-# Harmonix OS — Hyprland User Configuration
-# ═══════════════════════════════════════════════════════════════
-# Complete compositor settings with all plugins enabled.
-# ΣΔ → 0
 { config, pkgs, lib, inputs, ... }:
 
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    # package: managed at system level via programs.hyprland.package in desktop/hyprland.nix
-    # plugins: managed at system level to avoid lib.fileset.gitTracked store-path error
+    # Explicitly use nixpkgs hyprland — avoids lib.fileset.gitTracked error
+    # that occurs when home-manager tries to resolve hyprland from a flake store path
+    package = pkgs.hyprland;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
 
     settings = {
-      # ─── Monitor ──────────────────────────────────────────────
       monitor = [ ",preferred,auto,1" ];
 
-      # ─── General ──────────────────────────────────────────────
       general = {
         gaps_in = 4;
         gaps_out = 8;
@@ -26,18 +21,14 @@
         allow_tearing = false;
       };
 
-      # ─── Decoration ───────────────────────────────────────────
       decoration = {
         rounding = 12;
-
         blur = {
           enabled = true;
           size = 8;
           passes = 3;
           new_optimizations = true;
-          xray = false;
         };
-
         shadow = {
           enabled = true;
           range = 12;
@@ -46,7 +37,6 @@
         };
       };
 
-      # ─── Animations ───────────────────────────────────────────
       animations = {
         enabled = true;
         bezier = [
@@ -58,40 +48,29 @@
           "windows, 1, 5, harmonix"
           "windowsOut, 1, 5, smooth, popin 80%"
           "border, 1, 8, smooth"
-          "borderangle, 1, 6, smooth"
           "fade, 1, 4, fast"
           "workspaces, 1, 4, harmonix, slidevert"
         ];
       };
 
-      # ─── Input ─────────────────────────────────────────────────
       input = {
         kb_layout = "us";
         follow_mouse = 1;
         sensitivity = 0;
-        touchpad = {
-          natural_scroll = true;
-        };
+        touchpad.natural_scroll = true;
       };
 
-      # ─── Layouts ───────────────────────────────────────────────
       dwindle = {
         pseudotile = true;
         preserve_split = true;
         force_split = 2;
       };
 
-      master = {
-        new_status = "master";
-      };
-
-      # ─── Gestures ──────────────────────────────────────────────
       gestures = {
         workspace_swipe = true;
         workspace_swipe_fingers = 3;
       };
 
-      # ─── Misc ──────────────────────────────────────────────────
       misc = {
         force_default_wallpaper = 0;
         disable_hyprland_logo = true;
@@ -99,15 +78,12 @@
         vfr = true;
       };
 
-      # ─── Startup ───────────────────────────────────────────────
       exec-once = [
         "hyprpaper"
         "hypridle"
-        # mako removed: HyprPanel handles notifications internally
         "[workspace 1 silent] kitty"
       ];
 
-      # ─── Keybindings ──────────────────────────────────────────
       "$mod" = "SUPER";
 
       bind = [
@@ -120,7 +96,6 @@
         "$mod, J, togglesplit,"
         "$mod, F, fullscreen, 1"
         "$mod SHIFT, F, fullscreen, 0"
-
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
         "$mod, up, movefocus, u"
@@ -129,12 +104,10 @@
         "$mod, l, movefocus, r"
         "$mod, k, movefocus, u"
         "$mod, j, movefocus, d"
-
         "$mod SHIFT, h, movewindow, l"
         "$mod SHIFT, l, movewindow, r"
         "$mod SHIFT, k, movewindow, u"
         "$mod SHIFT, j, movewindow, d"
-
         "$mod, 1, workspace, 1"
         "$mod, 2, workspace, 2"
         "$mod, 3, workspace, 3"
@@ -143,7 +116,6 @@
         "$mod, 6, workspace, 6"
         "$mod, 7, workspace, 7"
         "$mod, 8, workspace, 8"
-
         "$mod SHIFT, 1, movetoworkspace, 1"
         "$mod SHIFT, 2, movetoworkspace, 2"
         "$mod SHIFT, 3, movetoworkspace, 3"
@@ -152,19 +124,11 @@
         "$mod SHIFT, 6, movetoworkspace, 6"
         "$mod SHIFT, 7, movetoworkspace, 7"
         "$mod SHIFT, 8, movetoworkspace, 8"
-
         "$mod, S, togglespecialworkspace, magic"
         "$mod SHIFT, S, movetoworkspace, special:magic"
-
-        "$mod, mouse_down, workspace, e+1"
-        "$mod, mouse_up, workspace, e-1"
-
         "$mod, Print, exec, grim -g \"$(slurp)\" - | wl-copy"
         ", Print, exec, grim - | wl-copy"
-
         "$mod SHIFT, L, exec, hyprlock"
-        "$mod, grave, hyprexpo:expo, toggle"
-        "$mod SHIFT, C, exec, hyprpicker -a"
       ];
 
       bindm = [
@@ -172,49 +136,10 @@
         "$mod, mouse:273, resizewindow"
       ];
 
-      # ─── Window Rules ──────────────────────────────────────────
       windowrulev2 = [
         "float, class:^(pcmanfm-qt)$"
         "size 900 600, class:^(pcmanfm-qt)$"
-        "float, title:^(ag-ui:.*)$"
-        "pin, title:^(ag-ui:status)$"
-        "size 400 300, title:^(ag-ui:status)$"
-        "move 100%-410 8, title:^(ag-ui:status)$"
       ];
-
-      # ─── Plugin Config ─────────────────────────────────────────
-      plugin = {
-        hyprbars = {
-          bar_height = 28;
-          bar_color = "rgba(1A1A1Eff)";
-          bar_text_font = "Inter";
-          bar_text_size = 11;
-          "col.text" = "rgba(F0F0F2ff)";
-          bar_part_of_window = true;
-          bar_precedence_over_border = true;
-
-          hyprbars-button = [
-            "rgba(FF4444ff), 14, , hyprctl dispatch killactive"
-            "rgba(FFB800ff), 14, , hyprctl dispatch togglefloating"
-            "rgba(00CC66ff), 14, , hyprctl dispatch fullscreen 1"
-          ];
-        };
-
-        hyprexpo = {
-          columns = 3;
-          gap_size = 5;
-          bg_col = "rgba(0A0A0Bff)";
-          workspace_method = "first 1";
-          enable_gesture = true;
-          gesture_positive = true;
-        };
-
-        borders-plus-plus = {
-          add_borders = 1;
-          "col.border_1" = "rgba(0066FF40)";
-          border_size_1 = 1;
-        };
-      };
     };
   };
 }
