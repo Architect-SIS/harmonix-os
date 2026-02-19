@@ -25,7 +25,7 @@
       # Initial password — change after first boot with `passwd`
       # The bootstrap script replaces this with your actual hash.
       # Once stable, switch to hashedPasswordFile for impermanence.
-      initialHashedPassword = "$6$MdpLfZH/gihPuiFm$aUD.kFVxuYxAbegI2UkxO8npKcJr3vZ1/4nGiTOvspzx70sZkE6t4IisRQp1tkXHi5fXqwasmfWjfvX/KOU7O.";
+      hashedPassword = "$6$MdpLfZH/gihPuiFm$aUD.kFVxuYxAbegI2UkxO8npKcJr3vZ1/4nGiTOvspzx70sZkE6t4IisRQp1tkXHi5fXqwasmfWjfvX/KOU7O.";
 
       openssh.authorizedKeys.keys = [
         # "ssh-ed25519 AAAA... architect@harmonix"
