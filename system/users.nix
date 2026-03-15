@@ -22,10 +22,14 @@
         "podman"          # Container management
       ];
 
-      # Initial password — change after first boot with `passwd`
-      # The bootstrap script replaces this with your actual hash.
-      # Once stable, switch to hashedPasswordFile for impermanence.
-      hashedPassword = "$6$MdpLfZH/gihPuiFm$aUD.kFVxuYxAbegI2UkxO8npKcJr3vZ1/4nGiTOvspzx70sZkE6t4IisRQp1tkXHi5fXqwasmfWjfvX/KOU7O.";
+      # Password strategy for ephemeral root (tmpfs wipes /etc/shadow every boot):
+      #
+      # initialPassword is set here so NixOS always has a working login.
+      # After boot, run `passwd` to set your real password — it persists
+      # because /etc/shadow is now in the impermanence persist list.
+      #
+      # Once stable, replace with hashedPasswordFile pointing to /persist.
+      initialPassword = "harmonix";
 
       openssh.authorizedKeys.keys = [
         # "ssh-ed25519 AAAA... architect@harmonix"
