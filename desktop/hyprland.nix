@@ -53,6 +53,17 @@
     # File manager
     pcmanfm-qt
 
+    # Document viewers
+    zathura        # PDF viewer (vim keys)
+    glow           # Markdown viewer (terminal)
+    xdg-utils
+
+    # Text editor (GUI)
+    vscodium       # VS Code without telemetry
+
+    # Web browser
+    firefox
+
     # Terminal
     kitty
 

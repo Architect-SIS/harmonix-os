@@ -18,7 +18,7 @@
 
     settings = {
       # ─── Monitor ──────────────────────────────────────────────
-      monitor = [ ",preferred,auto,1" ];
+      monitor = [ ",preferred,auto,2" ];
 
       # ─── General ──────────────────────────────────────────────
       general = {
