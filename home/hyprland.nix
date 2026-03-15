@@ -109,6 +109,7 @@
         "hyprpaper"
         "hypridle"
         "mako"
+        "hyprlock"
         "[workspace 1 silent] kitty"
       ];
 
