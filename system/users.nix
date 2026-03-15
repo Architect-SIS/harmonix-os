@@ -11,6 +11,8 @@
 
     users.architect = {
       isNormalUser = true;
+      createHome = true;
+      home = "/home/architect";
       description = "The Architect";
       shell = pkgs.zsh;
       extraGroups = [
@@ -20,6 +22,7 @@
         "render"          # GPU rendering
         "audio"           # Audio
         "podman"          # Container management
+        "docker"          # Docker access
       ];
 
       # Initial password — change after first boot with `passwd`

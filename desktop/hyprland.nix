@@ -48,7 +48,7 @@
     swappy
 
     # Application launcher
-    rofi-wayland
+    rofi
 
     # File manager
     pcmanfm-qt

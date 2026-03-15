@@ -168,7 +168,7 @@
         ", Print, exec, grim - | wl-copy"
 
         "$mod SHIFT, L, exec, hyprlock"
-        "$mod, grave, hyprexpo:expo, toggle"
+        "$mod, grave, exec, hyprctl dispatch hyprexpo:expo toggle"
         "$mod SHIFT, C, exec, hyprpicker -a"
       ];
 

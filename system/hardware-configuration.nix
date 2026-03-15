@@ -44,15 +44,16 @@
   hardware.cpu.amd.updateMicrocode = true;
 
   # ─── Filesystem Layout ────────────────────────────────────────
-  # Root = tmpfs (RAM-backed, ephemeral — wiped every boot)
+  # Root = btrfs subvol on primart drive (root)
   # /nix = btrfs subvol on primary drive (nix store, large)
   # /persist = btrfs subvol on primary drive (persistent state)
   # /boot = EFI system partition (FAT32, 512MB)
 
   fileSystems."/" = {
-    device = "none";
-    fsType = "tmpfs";
-    options = [ "defaults" "size=8G" "mode=755" ];
+    device = "dev/disk/by-label/HARMONIX";
+    fsType = "btrfs";
+    options = [ "subvol=root" "compress=zstd" "noatime" ];
+    neededForBoot = true;
   };
 
   fileSystems."/persist" = {

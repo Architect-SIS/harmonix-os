@@ -99,7 +99,7 @@
       inter
       jetbrains-mono
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       (nerd-fonts.jetbrains-mono)
     ];
     fontconfig.defaultFonts = {
