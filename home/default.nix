@@ -19,10 +19,45 @@
   home = {
     username = "architect";
     homeDirectory = "/home/architect";
+
+    # ─── Cursor Theme (fixes Hyprcursor/XCursor errors) ──────
+    pointerCursor = {
+      package = pkgs.adwaita-icon-theme;
+      name = "Adwaita";
+      size = 24;
+      gtk.enable = true;
+    };
     stateVersion = "24.11";
   };
 
   programs.home-manager.enable = true;
+
+  # ─── XDG User Directories (Documents, Downloads, etc.) ──────
+  xdg = {
+    enable = true;
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+      desktop = "${config.home.homeDirectory}/harmonix";
+      documents = "${config.home.homeDirectory}/documents";
+      download = "${config.home.homeDirectory}/Downloads";
+      music = "${config.home.homeDirectory}/music";
+      pictures = "${config.home.homeDirectory}/pictures";
+      videos = "${config.home.homeDirectory}/videos";
+      publicShare = "${config.home.homeDirectory}/public";
+      templates = "${config.home.homeDirectory}/templates";
+    };
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "inode/directory" = "pcmanfm-qt.desktop";
+        "text/html" = "firefox.desktop";
+        "x-scheme-handler/http" = "firefox.desktop";
+        "x-scheme-handler/https" = "firefox.desktop";
+        "application/pdf" = "org.pwmt.zathura.desktop";
+      };
+    };
+  };
 
   # ─── Git ──────────────────────────────────────────────────────
   programs.git = {

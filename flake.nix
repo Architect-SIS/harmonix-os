@@ -51,7 +51,7 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      config.allowUnfree = false;  # Sovereignty: no proprietary packages
+      config.allowUnfree = true; # claude-code requires unfree
     };
   in
   {
@@ -73,6 +73,9 @@
         ./system/containers.nix
         ./system/users.nix
 
+        # Performance Tuning (AMD Ryzen 7 5800X3D + RX 6750 XT)
+        ./system/performance.nix
+
         # Tier 6: Desktop
         ./desktop/hyprland.nix
         ./desktop/agui-renderer.nix
@@ -91,6 +94,7 @@
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
+          home-manager.backupFileExtension = "hm-bak";
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.architect = import ./home/default.nix;

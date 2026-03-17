@@ -33,7 +33,7 @@
 
   # ─── Desktop Packages (System-Level) ──────────────────────────
   environment.systemPackages = with pkgs; [
-    # Hyprland utilities (compositor itself is managed by programs.hyprland above)
+    # Hyprland utilities
     hyprpaper
     hyprpicker
     hyprcursor
@@ -54,12 +54,19 @@
     pcmanfm-qt
 
     # Document viewers
-    zathura        # PDF viewer (vim keys)
-    glow           # Markdown viewer (terminal)
+    zathura
+    glow
     xdg-utils
+    xdg-user-dirs
+
+    # Desktop Shell Toolkit
+    quickshell
+
+    # RGB Controller
+    openrgb
 
     # Text editor (GUI)
-    vscodium       # VS Code without telemetry
+    vscodium
 
     # Web browser
     firefox
@@ -76,13 +83,13 @@
 
     # GTK/Qt integration
     gsettings-desktop-schemas
+    glib
+    dconf
     qt6.qtwayland
-
-    # Browser
-    firefox
   ];
 
   # ─── Environment Variables ────────────────────────────────────
+  # These are set BEFORE Hyprland starts (in the session env)
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
@@ -91,10 +98,23 @@
     XDG_SESSION_TYPE = "wayland";
     XDG_CURRENT_DESKTOP = "Hyprland";
     GDK_BACKEND = "wayland";
+
+    # Cursor theme — set BEFORE Hyprland starts so it finds the theme
+    HYPRCURSOR_THEME = "Adwaita";
+    HYPRCURSOR_SIZE = "24";
+    XCURSOR_THEME = "Adwaita";
+    XCURSOR_SIZE = "24";
   };
+
+  # ─── dconf (GSettings backend — required for cursor/theme sync) ─
+  programs.dconf.enable = true;
 
   # ─── Polkit (Privilege Escalation UI) ─────────────────────────
   security.polkit.enable = true;
 
   services.gnome.gnome-keyring.enable = true;
+
+  # ─── OpenRGB (Hardware RGB Control) ─────────────────────────
+  services.hardware.openrgb.enable = true;
+  hardware.i2c.enable = true;
 }

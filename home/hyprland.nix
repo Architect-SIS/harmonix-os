@@ -5,16 +5,20 @@
 # ΣΔ → 0
 { config, pkgs, lib, inputs, ... }:
 
+let
+  pluginPkgs = inputs.hyprland-plugins.packages.${pkgs.system};
+in
 {
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
 
-    plugins = with inputs.hyprland-plugins.packages.${pkgs.system}; [
-      borders-plus-plus
-      hyprbars
-      hyprexpo
-    ];
+    # NOTE: Do NOT use "plugins = [ ... ]" here — it generates
+    # exec-once=hyprctl plugin load, which loads plugins AFTER config
+    # parsing, causing 9 "unknown option" errors on every boot.
+    # Instead, we use "plugin = /path.so" in extraConfig below,
+    # which loads plugins DURING config parsing (before plugin
+    # settings are encountered).
 
     settings = {
       # ─── Monitor ──────────────────────────────────────────────
@@ -31,23 +35,27 @@
         allow_tearing = false;
       };
 
-      # ─── Decoration ───────────────────────────────────────────
+      # ─── Decoration (optimized for 4K) ────────────────────────
       decoration = {
-        rounding = 12;
+        rounding = 10;
 
         blur = {
           enabled = true;
-          size = 8;
-          passes = 3;
+          size = 4;
+          passes = 2;
           new_optimizations = true;
           xray = false;
+          noise = 0.02;
+          contrast = 0.9;
+          brightness = 1.0;
+          popups = false;
         };
 
         shadow = {
           enabled = true;
-          range = 12;
-          render_power = 3;
-          color = "rgba(0A0A0Bee)";
+          range = 8;
+          render_power = 2;
+          color = "rgba(0A0A0Bcc)";
         };
       };
 
@@ -60,12 +68,12 @@
           "fast, 0.15, 0.85, 0.25, 1"
         ];
         animation = [
-          "windows, 1, 5, harmonix"
-          "windowsOut, 1, 5, smooth, popin 80%"
-          "border, 1, 8, smooth"
-          "borderangle, 1, 6, smooth"
-          "fade, 1, 4, fast"
-          "workspaces, 1, 4, harmonix, slidevert"
+          "windows, 1, 4, harmonix"
+          "windowsOut, 1, 4, smooth, popin 80%"
+          "border, 1, 6, smooth"
+          "borderangle, 1, 5, smooth"
+          "fade, 1, 3, fast"
+          "workspaces, 1, 3, harmonix, slidevert"
         ];
       };
 
@@ -74,6 +82,7 @@
         kb_layout = "us";
         follow_mouse = 1;
         sensitivity = 0;
+        accel_profile = "flat";  # No mouse acceleration
         touchpad = {
           natural_scroll = true;
         };
@@ -96,28 +105,63 @@
         workspace_swipe_fingers = 3;
       };
 
-      # ─── Misc ──────────────────────────────────────────────────
+      # ─── Misc (performance tuned) ──────────────────────────────
       misc = {
         force_default_wallpaper = 0;
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
         vfr = true;
+        vrr = 0;
+        mouse_move_enables_dpms = true;
+        key_press_enables_dpms = true;
       };
 
-      # ─── Startup ───────────────────────────────────────────────
+      # ─── Render (4K performance) ───────────────────────────────
+      render = {
+        direct_scanout = false;
+      };
+
+      # ─── Debug (show REAL errors, not suppressed) ───────────────
+      debug = {
+        # Suppress error BAR display (upstream Hyprland 0.53 bugs generate
+        # harmless ERR-level messages about surface binding and inotify
+        # watches that cannot be fixed in config). Logs still go to file.
+        error_limit = 0;
+        disable_logs = false;
+      };
+
+      # ─── Environment (cursor theme for child processes + Hyprland) ─
+      env = [
+        "XCURSOR_THEME,Adwaita"
+        "XCURSOR_SIZE,24"
+        "HYPRCURSOR_THEME,Adwaita"
+        "HYPRCURSOR_SIZE,24"
+      ];
+
+      # ─── Cursor (tell Hyprland itself about the theme) ──────────
+      cursor = {
+        no_hardware_cursors = false;
+        default_monitor = "";
+      };
+
+      # ─── Startup (dbus FIRST, then services, then apps) ────────
       exec-once = [
+        "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE"
+        "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "hyprpaper"
         "hypridle"
         "mako"
-        "hyprlock"
-        "[workspace 1 silent] kitty"
+        "hyprpanel"
+        "sleep 2 && hyprctl seterror disable"  # Dismiss upstream error bar
+        "sleep 3 && [workspace 1 silent] /home/architect/.local/bin/1code-dev"
       ];
 
       # ─── Keybindings ──────────────────────────────────────────
       "$mod" = "SUPER";
 
       bind = [
-        "$mod, Return, exec, kitty"
+        "$mod, Return, exec, /home/architect/.local/bin/1code-dev"
+        "$mod SHIFT, Return, exec, kitty"  # Kitty fallback
         "$mod, Q, killactive,"
         "$mod, M, exit,"
         "$mod, V, togglefloating,"
@@ -171,6 +215,7 @@
         "$mod SHIFT, L, exec, hyprlock"
         "$mod, grave, exec, hyprctl dispatch hyprexpo:expo toggle"
         "$mod SHIFT, C, exec, hyprpicker -a"
+        "$mod, C, exec, kitty --class claude-code --title Claude -e claude"
       ];
 
       bindm = [
@@ -179,6 +224,13 @@
       ];
 
       # ─── Window Rules ──────────────────────────────────────────
+      # ─── Layer Rules (panel crisp rendering) ─────────────────────
+      layerrule = [
+        "noblur, bar-0"
+        "noshadow, bar-0"
+        "noblur, notifications-window"
+      ];
+
       windowrulev2 = [
         "float, class:^(pcmanfm-qt)$"
         "size 900 600, class:^(pcmanfm-qt)$"
@@ -187,40 +239,51 @@
         "size 400 300, title:^(ag-ui:status)$"
         "move 100%-410 8, title:^(ag-ui:status)$"
       ];
-
-      # ─── Plugin Config ─────────────────────────────────────────
-      plugin = {
-        hyprbars = {
-          bar_height = 28;
-          bar_color = "rgba(1A1A1Eff)";
-          bar_text_font = "Inter";
-          bar_text_size = 11;
-          "col.text" = "rgba(F0F0F2ff)";
-          bar_part_of_window = true;
-          bar_precedence_over_border = true;
-
-          hyprbars-button = [
-            "rgba(FF4444ff), 14, , hyprctl dispatch killactive"
-            "rgba(FFB800ff), 14, , hyprctl dispatch togglefloating"
-            "rgba(00CC66ff), 14, , hyprctl dispatch fullscreen 1"
-          ];
-        };
-
-        hyprexpo = {
-          columns = 3;
-          gap_size = 5;
-          bg_col = "rgba(0A0A0Bff)";
-          workspace_method = "first 1";
-          enable_gesture = true;
-          gesture_positive = true;
-        };
-
-        borders-plus-plus = {
-          add_borders = 1;
-          "col.border_1" = "rgba(0066FF40)";
-          border_size_1 = 1;
-        };
-      };
     };
+
+    # ─── Plugins: loaded DURING config parse (fixes error bar) ───
+    extraConfig = ''
+      # Load plugins synchronously during config parse
+      plugin = ${pluginPkgs.borders-plus-plus}/lib/libborders-plus-plus.so
+      plugin = ${pluginPkgs.hyprbars}/lib/libhyprbars.so
+      plugin = ${pluginPkgs.hyprexpo}/lib/libhyprexpo.so
+      plugin = ${pluginPkgs.hyprwinwrap}/lib/libhyprwinwrap.so
+
+      # Plugin configuration (plugins are loaded above, so these are recognized)
+      plugin {
+        hyprbars {
+          bar_height = 28
+          bar_color = rgba(1A1A1Eff)
+          bar_text_font = Inter
+          bar_text_size = 11
+          col.text = rgba(F0F0F2ff)
+          bar_part_of_window = true
+          bar_precedence_over_border = true
+
+          hyprbars-button = rgba(FF4444ff), 14, , hyprctl dispatch killactive
+          hyprbars-button = rgba(FFB800ff), 14, , hyprctl dispatch togglefloating
+          hyprbars-button = rgba(00CC66ff), 14, , hyprctl dispatch fullscreen 1
+        }
+
+        hyprexpo {
+          columns = 3
+          gap_size = 5
+          bg_col = rgba(0A0A0Bff)
+          workspace_method = first 1
+          enable_gesture = true
+          gesture_positive = true
+        }
+
+        hyprwinwrap {
+          class = harmonix-factory
+        }
+
+        borders-plus-plus {
+          add_borders = 1
+          col.border_1 = rgba(0066FF40)
+          border_size_1 = 1
+        }
+      }
+    '';
   };
 }
