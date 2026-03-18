@@ -120,5 +120,11 @@
 
   # ─── OpenRGB (Hardware RGB Control) ─────────────────────────
   services.hardware.openrgb.enable = true;
+
+  # ─── OpenRGB: Grant hidraw access to input group ─────────────
+  services.udev.extraRules = lib.mkAfter ''
+    # Allow input group to access all hidraw devices (OpenRGB keyboard/mouse RGB)
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="input"
+  '';
   hardware.i2c.enable = true;
 }

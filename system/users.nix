@@ -23,6 +23,8 @@
         "audio"           # Audio
         "podman"          # Container management
         "docker"          # Docker access
+        "i2c"              # OpenRGB: I2C/SMBus access (GPU + MB RGB)
+        "input"            # OpenRGB: HID input device access
       ];
 
       # Password: "harmonix" — hashedPassword forces this on every activation
