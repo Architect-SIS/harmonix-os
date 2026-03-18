@@ -76,6 +76,13 @@
     options = [ "fmask=0077" "dmask=0077" ];
   };
 
+  # ─── TENSOR_FIELD (AI/Knowledge Base — 953GB btrfs) ──────────
+  fileSystems."/tensor_field" = {
+    device = "/dev/disk/by-label/TENSOR_FIELD";
+    fsType = "btrfs";
+    options = [ "compress=zstd" "noatime" ];
+  };
+
   swapDevices = [ ];
 
   # ─── Networking (hardware-level) ──────────────────────────────

@@ -81,6 +81,17 @@
   };
 
   # ─── Direnv (Auto-activate project envs) ─────────────────────
+  # ─── XDG Portal Config (File Dialogs on Hyprland) ─────────────
+  # gtk.portal has UseIn=gnome, so without this config, FileChooser
+  # has no backend on Hyprland and Electron file dialogs hang forever.
+  xdg.configFile."xdg-desktop-portal/hyprland-portals.conf".text = ''
+    [preferred]
+    default=gtk
+    org.freedesktop.impl.portal.Screenshot=hyprland
+    org.freedesktop.impl.portal.ScreenCast=hyprland
+    org.freedesktop.impl.portal.GlobalShortcuts=hyprland
+  '';
+
   # ─── Hyprpaper (Wallpaper) ────────────────────────────────────
   xdg.configFile."hypr/hyprpaper.conf".text = ''
     preload = /home/architect/pictures/harmonix-void.png

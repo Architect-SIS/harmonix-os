@@ -103,7 +103,7 @@
     # ─── Firewall ───────────────────────────────────────────────
     networking.firewall = {
       enable = true;
-      allowedTCPPorts = [ ];
+      allowedTCPPorts = [ 50001 5174 ];  # A0 mutant UI + NixOS configurator
       allowedUDPPorts = [ ];
       trustedInterfaces = [ "tailscale0" ];
     };
