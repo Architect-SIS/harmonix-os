@@ -81,6 +81,12 @@
   };
 
   # ─── Direnv (Auto-activate project envs) ─────────────────────
+  # ─── Hyprpaper (Wallpaper) ────────────────────────────────────
+  xdg.configFile."hypr/hyprpaper.conf".text = ''
+    preload = /home/architect/pictures/harmonix-void.png
+    wallpaper = ,/home/architect/pictures/harmonix-void.png
+    ipc = on
+  '';
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;

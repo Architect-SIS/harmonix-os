@@ -12,6 +12,7 @@
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+    withUWSM = true;
   };
 
   # ─── XDG Portal (Screen Sharing, File Dialogs) ───────────────
@@ -25,7 +26,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd \"uwsm start hyprland-uwsm.desktop\"";
         user = "architect";
       };
     };
@@ -39,9 +40,12 @@
     hyprcursor
     hyprlock
     hypridle
+    uwsm              # Universal Wayland Session Manager
+    hyprpolkitagent
 
     # Wayland essentials
     wl-clipboard
+    cliphist
     wl-screenrec
     grim
     slurp

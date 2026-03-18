@@ -56,6 +56,10 @@
 
   # ─── Additional GPU Packages ────────────────────────────────
 
+  # ─── LACT GPU Control Daemon ────────────────────────────────
+  systemd.packages = [ pkgs.lact ];
+  systemd.services.lactd.wantedBy = [ "multi-user.target" ];
+
   # ─── Gamemode (on-demand performance boost) ─────────────────
   programs.gamemode = {
     enable = true;
@@ -88,5 +92,7 @@
     vulkan-tools        # vulkaninfo, vkcube
     mesa-demos         # glxinfo, glmark2
     libva-utils         # vainfo — VA-API decode info
+    wev                 # Wayland event viewer (right-click debug)
+    evtest              # Raw input event testing
   ];
 }

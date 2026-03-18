@@ -151,6 +151,8 @@ in
         "hyprpaper"
         "hypridle"
         "mako"
+        "hyprpolkitagent"
+        "wl-paste --type text --watch cliphist store"  # Clipboard history
         "hyprpanel"
         "sleep 2 && hyprctl seterror disable"  # Dismiss upstream error bar
         "sleep 3 && [workspace 1 silent] /home/architect/.local/bin/1code-dev"
@@ -208,6 +210,10 @@ in
 
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
+
+        # Gaming mouse side buttons (no modifier — always active)
+        ", mouse:275, workspace, e-1"  # Side back → prev workspace
+        ", mouse:276, workspace, e+1"  # Side fwd  → next workspace
 
         "$mod, Print, exec, grim -g \"$(slurp)\" - | wl-copy"
         ", Print, exec, grim - | wl-copy"
