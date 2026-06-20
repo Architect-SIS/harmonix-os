@@ -82,6 +82,7 @@
 
         # Tier 5: Agent Brain
         ./agents/agent-zero.nix
+        ./agents/mission-control.nix
 
         # Tier 4: Builder Mode
         ./builder/builder.nix
