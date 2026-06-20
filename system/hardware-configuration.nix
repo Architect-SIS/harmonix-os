@@ -44,15 +44,16 @@
   hardware.cpu.amd.updateMicrocode = true;
 
   # ─── Filesystem Layout ────────────────────────────────────────
-  # Root = tmpfs (RAM-backed, ephemeral — wiped every boot)
+  # Root = btrfs subvol on primart drive (root)
   # /nix = btrfs subvol on primary drive (nix store, large)
   # /persist = btrfs subvol on primary drive (persistent state)
   # /boot = EFI system partition (FAT32, 512MB)
 
   fileSystems."/" = {
-    device = "none";
-    fsType = "tmpfs";
-    options = [ "defaults" "size=8G" "mode=755" ];
+    device = "dev/disk/by-label/HARMONIX";
+    fsType = "btrfs";
+    options = [ "subvol=root" "compress=zstd" "noatime" ];
+    neededForBoot = true;
   };
 
   fileSystems."/persist" = {
@@ -73,6 +74,13 @@
     device = "/dev/disk/by-label/BOOT";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
+  };
+
+  # ─── TENSOR_FIELD (AI/Knowledge Base — 953GB btrfs) ──────────
+  fileSystems."/tensor_field" = {
+    device = "/dev/disk/by-label/TENSOR_FIELD";
+    fsType = "btrfs";
+    options = [ "compress=zstd" "noatime" ];
   };
 
   swapDevices = [ ];

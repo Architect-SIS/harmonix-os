@@ -12,7 +12,6 @@
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-    withUWSM = true;
   };
 
   # ─── XDG Portal (Screen Sharing, File Dialogs) ───────────────
@@ -26,7 +25,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd \"uwsm start hyprland-uwsm.desktop\"";
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
         user = "architect";
       };
     };
@@ -34,18 +33,15 @@
 
   # ─── Desktop Packages (System-Level) ──────────────────────────
   environment.systemPackages = with pkgs; [
-    # Hyprland utilities
+    # Hyprland utilities (compositor itself is managed by programs.hyprland above)
     hyprpaper
     hyprpicker
     hyprcursor
     hyprlock
     hypridle
-    uwsm              # Universal Wayland Session Manager
-    hyprpolkitagent
 
     # Wayland essentials
     wl-clipboard
-    cliphist
     wl-screenrec
     grim
     slurp
@@ -58,10 +54,9 @@
     pcmanfm-qt
 
     # Document viewers
-    zathura
-    glow
+    zathura        # PDF viewer (vim keys)
+    glow           # Markdown viewer (terminal)
     xdg-utils
-    xdg-user-dirs
 
     # Desktop Shell Toolkit
     quickshell
@@ -70,7 +65,7 @@
     openrgb
 
     # Text editor (GUI)
-    vscodium
+    vscodium       # VS Code without telemetry
 
     # Web browser
     firefox
@@ -87,13 +82,13 @@
 
     # GTK/Qt integration
     gsettings-desktop-schemas
-    glib
-    dconf
     qt6.qtwayland
+
+    # Browser
+    firefox
   ];
 
   # ─── Environment Variables ────────────────────────────────────
-  # These are set BEFORE Hyprland starts (in the session env)
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
@@ -102,16 +97,7 @@
     XDG_SESSION_TYPE = "wayland";
     XDG_CURRENT_DESKTOP = "Hyprland";
     GDK_BACKEND = "wayland";
-
-    # Cursor theme — set BEFORE Hyprland starts so it finds the theme
-    HYPRCURSOR_THEME = "Adwaita";
-    HYPRCURSOR_SIZE = "24";
-    XCURSOR_THEME = "Adwaita";
-    XCURSOR_SIZE = "24";
   };
-
-  # ─── dconf (GSettings backend — required for cursor/theme sync) ─
-  programs.dconf.enable = true;
 
   # ─── Polkit (Privilege Escalation UI) ─────────────────────────
   security.polkit.enable = true;
@@ -120,11 +106,5 @@
 
   # ─── OpenRGB (Hardware RGB Control) ─────────────────────────
   services.hardware.openrgb.enable = true;
-
-  # ─── OpenRGB: Grant hidraw access to input group ─────────────
-  services.udev.extraRules = lib.mkAfter ''
-    # Allow input group to access all hidraw devices (OpenRGB keyboard/mouse RGB)
-    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="input"
-  '';
   hardware.i2c.enable = true;
 }

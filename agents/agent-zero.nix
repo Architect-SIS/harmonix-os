@@ -14,7 +14,7 @@ in
   # ─── AgentZero Container ──────────────────────────────────────
   virtualisation.oci-containers.containers.agent-zero = {
     image = "frdel/agent-zero:latest";
-    autoStart = false;  # Start manually after first boot: podman start agent-zero
+    autoStart = true;  # Auto-started by NixOS at boot
 
     volumes = [
       "${harmonixAgentsDir}/profiles:/app/prompts/profiles:ro"
@@ -35,7 +35,7 @@ in
     # environmentFiles = [ "${harmonixAgentsDir}/.env" ];
 
     ports = [
-      "127.0.0.1:50001:50001"
+      "0.0.0.0:50001:50001"
     ];
 
     extraOptions = [

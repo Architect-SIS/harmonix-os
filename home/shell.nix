@@ -35,7 +35,7 @@
       hzos = "cd ~/harmonix-os";
     };
 
-    initContent = ''
+    initExtra = ''
       if [[ $SHLVL -eq 1 ]]; then
         echo ""
         echo "  ═══════════════════════════════════════"

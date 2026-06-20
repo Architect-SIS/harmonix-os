@@ -33,7 +33,6 @@
         "/etc/machine-id"
         "/etc/ssh/ssh_host_ed25519_key"
         "/etc/ssh/ssh_host_ed25519_key.pub"
-        "/etc/shadow"           # Persist password changes across ephemeral reboots
       ];
       users.architect = {
         directories = [
@@ -104,7 +103,7 @@
     # ─── Firewall ───────────────────────────────────────────────
     networking.firewall = {
       enable = true;
-      allowedTCPPorts = [ ];
+      allowedTCPPorts = [ 3000 3001 5174 ];  # RA-H + Jess + configurator
       allowedUDPPorts = [ ];
       trustedInterfaces = [ "tailscale0" ];
     };
@@ -113,7 +112,7 @@
     services.openssh = {
       enable = true;
       settings = {
-        PasswordAuthentication = true;
+        PasswordAuthentication = false;
         PermitRootLogin = "no";
         KbdInteractiveAuthentication = false;
         X11Forwarding = false;

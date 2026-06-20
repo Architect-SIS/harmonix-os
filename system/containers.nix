@@ -26,6 +26,9 @@
   };
 
   # ─── User Namespace Support ───────────────────────────────────
+  # ─── Compose Support ───────────────────────────────────────────
+  environment.systemPackages = [ pkgs.podman-compose ];
+
   security.unprivilegedUsernsClone = true;
 
   # Storage driver

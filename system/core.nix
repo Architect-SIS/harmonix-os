@@ -6,6 +6,8 @@
 { config, pkgs, lib, ... }:
 
 {
+  # Allow unfree packages (claude-code)
+  nixpkgs.config.allowUnfree = true;
   # ─── Boot ─────────────────────────────────────────────────────
   boot = {
     loader = {
@@ -78,13 +80,66 @@
 
     # Nix tools
     nil             # Nix LSP
-    nixfmt          # Nix formatter (nixfmt-rfc-style merged into nixfmt)
+    nixfmt-rfc-style
+
+    # Electron / native module build tools
+    gcc
+    gnumake
+    pkg-config
+    libsecret
+    
+    # AppImage support (1Code terminal)
+    # AppImage support (1Code terminal)
+    appimage-run
+
+    # Bun runtime (1Code build)
+    bun
+
+    # Claude Code
+    claude-code
 
     # System
     pciutils
     usbutils
     lsof
   ];
+
+  # ─── Dynamic Linking (FHS compat) ──────────────────────────────
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      glib
+      nss
+      nspr
+      dbus
+      atk
+      cups
+      libdrm
+      gtk3
+      pango
+      cairo
+      xorg.libX11
+      xorg.libXcomposite
+      xorg.libXdamage
+      xorg.libXext
+      xorg.libXfixes
+      xorg.libXrandr
+      xorg.libxcb
+      mesa
+      expat
+      alsa-lib
+      at-spi2-atk
+      at-spi2-core
+      libxkbcommon
+      vulkan-loader
+      mesa.drivers
+      libgbm
+      libGL
+      libglvnd
+    ];
+  };
 
   # ─── Shell ────────────────────────────────────────────────────
   programs.zsh = {
@@ -112,7 +167,7 @@
   # ─── Services ─────────────────────────────────────────────────
   services = {
     # Disable unnecessary services
-    xserver.enable = false;  # Wayland only, no X11
+    xserver.enable = true;  # Wayland only, no X11
 
     # Pipewire for audio
     pipewire = {
@@ -126,6 +181,19 @@
     dbus.enable = true;
   };
 
-  # ─── Hardware ─────────────────────────────────────────────────
-  # hardware.graphics defined in hardware-configuration.nix with enable32Bit
+  # ─── Hardware (AMD Radeon RX 6750 XT / Navi 22) ─────────────
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;  # 32-bit Vulkan/GL support
+    };
+    amdgpu = {
+      initrd.enable = true;  # Load amdgpu early in boot
+    };
+  };
 }
+
+
+
+
+
