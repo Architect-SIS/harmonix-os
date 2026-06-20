@@ -41,7 +41,6 @@ in
     extraOptions = [
       "--memory=8g"
       "--cpus=4"
-      "--restart=unless-stopped"
     ];
   };
 
@@ -61,7 +60,6 @@ in
     extraOptions = [
       "--memory=1g"
       "--cpus=1"
-      "--restart=unless-stopped"
     ];
   };
 
