@@ -57,6 +57,14 @@
         "application/pdf" = "org.pwmt.zathura.desktop";
       };
     };
+    desktopEntries."mission-control" = {
+      name = "Mission Control";
+      genericName = "Operations Dashboard";
+      comment = "Harmonix OS Mission Control Dashboard";
+      exec = "firefox --new-window http://100.75.154.33:3000";
+      icon = "firefox";
+      categories = [ "Network" ];
+    };
   };
 
   # ─── Git ──────────────────────────────────────────────────────
