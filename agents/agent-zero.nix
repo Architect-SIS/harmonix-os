@@ -35,7 +35,7 @@ in
     # environmentFiles = [ "${harmonixAgentsDir}/.env" ];
 
     ports = [
-      "0.0.0.0:50001:50001"
+      "0.0.0.0:50001:80"
     ];
 
     extraOptions = [
